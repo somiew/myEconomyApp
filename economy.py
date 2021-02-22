@@ -99,11 +99,22 @@ def read_newSalaryDate(person):
 
     return date
 
+# Read line from file
+def read_line(document, line):
+    with open(document, "r") as f:
+        lines = f.readlines()
+        return lines[line].strip()
+
+# Write line to file
+def write_line(document, message):
+    with open(document, "w") as f:
+        f.write(message)
+
 
 # not sure I'm doing this correct, but I think so?
 # in theory this isn't running when I'm using economy.py in other scripts?
 if __name__ == "__main__":
-    person = 'Jasmine'
+    person = read_line('person.txt', 0)
     incomeCat = 'Lön'
     income = 10000
     expenseCat = 'Hyra'

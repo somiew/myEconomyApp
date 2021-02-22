@@ -2,13 +2,7 @@
 # python 3.8.7
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 import economy
-
-person = 'Jasmine'
-
-# create table unless it already exists
-economy.create_table(person)
 
 
 class Ui_MainWindow(object):
@@ -190,7 +184,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
 
         # connect button to function
-        self.sparaDatum.pressed.connect(lambda: self.add_nSD(person))
+        self.sparaDatum.pressed.connect(lambda: self.add_nSD(economy.read_line('person.txt', 0)))
         self.actionSamuel.triggered.connect(lambda: self.setPerson('Samuel'))
         self.actionJasmine.triggered.connect(lambda: self.setPerson('Jasmine'))
 
@@ -307,13 +301,6 @@ class Ui_MainWindow(object):
         newDate = newDate.toPyDate()      
         economy.add_newSalaryDate(person, newDate)
 
-    def setPerson(self, person):
-        person = person
-        self.profilNamn.setText(person)
-        nSDYear, nSDMonth, nSDDay = self.read_nSD(person)
-        self.nastaLonEdit.setDate(QtCore.QDate(nSDYear, nSDMonth, nSDDay))
-        return person
-
     def read_nSD(self, person):
         # get date from database, unless person is new. Then set to 1970-01-01.
         nSD = economy.read_newSalaryDate(person)
@@ -328,9 +315,22 @@ class Ui_MainWindow(object):
             nSDDay = 1
         return nSDYear, nSDMonth, nSDDay
 
+    def setPerson(self, person):
+        economy.create_table(person)
+        self.profilNamn.setText(person)
+        nSDYear, nSDMonth, nSDDay = self.read_nSD(person)
+        self.nastaLonEdit.setDate(QtCore.QDate(nSDYear, nSDMonth, nSDDay))
+        # return person
+        economy.write_line('person.txt', person)
+
 
 if __name__ == "__main__":
     import sys
+
+    person = economy.read_line('person.txt', 0)
+
+    # create table unless it already exists
+    economy.create_table(person)
 
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
