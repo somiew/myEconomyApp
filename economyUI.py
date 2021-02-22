@@ -5,22 +5,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import economy
 
-person = 'Samuel'
+person = 'Jasmine'
 
 # create table unless it already exists
 economy.create_table(person)
-
-# get date from database, unless person is new. Then set to 1970-01-01.
-nSD = economy.read_newSalaryDate(person)
-nSD = nSD[0].split('-')
-try:
-    nSDYear = int(nSD[0])
-    nSDMonth = int(nSD[1])
-    nSDDay = int(nSD[2])
-except:
-    nSDYear = 1970
-    nSDMonth = 1
-    nSDDay = 1
 
 
 class Ui_MainWindow(object):
@@ -51,6 +39,10 @@ class Ui_MainWindow(object):
         self.nastaLon.setObjectName("nastaLon")
         self.nastaLonEdit = QtWidgets.QDateEdit(self.tab)
         self.nastaLonEdit.setGeometry(QtCore.QRect(164, 320, 111, 22))
+
+        # get year, month and day before setting them when opening the application
+        nSDYear, nSDMonth, nSDDay = self.read_nSD(person)
+
         self.nastaLonEdit.setDate(QtCore.QDate(nSDYear, nSDMonth, nSDDay))
         self.nastaLonEdit.setObjectName("nastaLonEdit")
         self.inkomstWidget = QtWidgets.QTreeWidget(self.tab)
@@ -176,23 +168,21 @@ class Ui_MainWindow(object):
         self.actionAvsluta.setObjectName("actionAvsluta")
         self.actionDelete = QtWidgets.QAction(MainWindow)
         self.actionDelete.setObjectName("actionDelete")
-        self.actionSamuel = QtWidgets.QAction(MainWindow)
-        self.actionSamuel.setObjectName("actionSamuel")
         self.actionJasmine = QtWidgets.QAction(MainWindow)
         self.actionJasmine.setObjectName("actionJasmine")
         self.actionAll = QtWidgets.QAction(MainWindow)
         self.actionAll.setObjectName("actionAll")
         self.actionNy = QtWidgets.QAction(MainWindow)
         self.actionNy.setObjectName("actionNy")
-        self.actionJasmine_2 = QtWidgets.QAction(MainWindow)
-        self.actionJasmine_2.setObjectName("actionJasmine_2")
-        self.actionSamuel_2 = QtWidgets.QAction(MainWindow)
-        self.actionSamuel_2.setObjectName("actionSamuel_2")
+        self.actionJasmine = QtWidgets.QAction(MainWindow)
+        self.actionJasmine.setObjectName("actionJasmine")
+        self.actionSamuel = QtWidgets.QAction(MainWindow)
+        self.actionSamuel.setObjectName("actionSamuel")
         self.actionNytt = QtWidgets.QAction(MainWindow)
         self.actionNytt.setObjectName("actionNytt")
         self.menyOpen.addAction(self.actionAll)
-        self.menyOpen.addAction(self.actionJasmine_2)
-        self.menyOpen.addAction(self.actionSamuel_2)
+        self.menyOpen.addAction(self.actionJasmine)
+        self.menyOpen.addAction(self.actionSamuel)
         self.menuFile.addAction(self.actionSpara)
         self.menuFile.addAction(self.actionNytt)
         self.menuFile.addAction(self.menyOpen.menuAction())
@@ -201,6 +191,8 @@ class Ui_MainWindow(object):
 
         # connect button to function
         self.sparaDatum.pressed.connect(lambda: self.add_nSD(person))
+        self.actionSamuel.triggered.connect(lambda: self.setPerson('Samuel'))
+        self.actionJasmine.triggered.connect(lambda: self.setPerson('Jasmine'))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -303,12 +295,10 @@ class Ui_MainWindow(object):
         self.actionAvsluta.setStatusTip(_translate("MainWindow", "Avsluta program"))
         self.actionDelete.setText(_translate("MainWindow", "Radera"))
         self.actionDelete.setStatusTip(_translate("MainWindow", "Delete current file"))
-        self.actionSamuel.setText(_translate("MainWindow", "Samuel"))
-        self.actionJasmine.setText(_translate("MainWindow", "Jasmine"))
         self.actionAll.setText(_translate("MainWindow", "All"))
         self.actionNy.setText(_translate("MainWindow", "Ny"))
-        self.actionJasmine_2.setText(_translate("MainWindow", "Jasmine"))
-        self.actionSamuel_2.setText(_translate("MainWindow", "Samuel"))
+        self.actionJasmine.setText(_translate("MainWindow", "Jasmine"))
+        self.actionSamuel.setText(_translate("MainWindow", "Samuel"))
         self.actionNytt.setText(_translate("MainWindow", "Ny person"))
     
     def add_nSD(self, person):
@@ -316,6 +306,27 @@ class Ui_MainWindow(object):
         newDate = self.nastaLonEdit.date()
         newDate = newDate.toPyDate()      
         economy.add_newSalaryDate(person, newDate)
+
+    def setPerson(self, person):
+        person = person
+        self.profilNamn.setText(person)
+        nSDYear, nSDMonth, nSDDay = self.read_nSD(person)
+        self.nastaLonEdit.setDate(QtCore.QDate(nSDYear, nSDMonth, nSDDay))
+        return person
+
+    def read_nSD(self, person):
+        # get date from database, unless person is new. Then set to 1970-01-01.
+        nSD = economy.read_newSalaryDate(person)
+        nSD = nSD[0].split('-')
+        try:
+            nSDYear = int(nSD[0])
+            nSDMonth = int(nSD[1])
+            nSDDay = int(nSD[2])
+        except:
+            nSDYear = 1970
+            nSDMonth = 1
+            nSDDay = 1
+        return nSDYear, nSDMonth, nSDDay
 
 
 if __name__ == "__main__":
