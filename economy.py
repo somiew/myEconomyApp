@@ -1,12 +1,6 @@
 # python 3.8.7
 import sqlite3
 
-person = 'Jasmine'
-incomeCat = 'Lön'
-income = 10000
-expenseCat = 'Hyra'
-expense = 4000
-newSalaryDate = '2021-02-25'
 
 # ----------
 # WARNING, script is stupid because when I call this from another script, 
@@ -109,6 +103,13 @@ def read_newSalaryDate(person):
 # not sure I'm doing this correct, but I think so?
 # in theory this isn't running when I'm using economy.py in other scripts?
 if __name__ == "__main__":
+    person = 'Jasmine'
+    incomeCat = 'Lön'
+    income = 10000
+    expenseCat = 'Hyra'
+    expense = 4000
+    newSalaryDate = '2021-02-25'
+
     create_table(person)
     #add_income(person, incomeCat, income)
     #add_expense(person, expenseCat, expense)

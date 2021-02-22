@@ -220,7 +220,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.namn.setText(_translate("MainWindow", "Namn:"))
-        self.profilNamn.setText(_translate("MainWindow", "Samuel Lindsköld"))
+        self.profilNamn.setText(_translate("MainWindow", person))
         self.sparaDatum.setText(_translate("MainWindow", "Spara Datum"))
         self.nyUtgift.setText(_translate("MainWindow", "Ny Utgift:"))
         self.nastaLon.setText(_translate("MainWindow", "Nästa Lön:"))
@@ -307,8 +307,8 @@ class Ui_MainWindow(object):
         self.actionJasmine.setText(_translate("MainWindow", "Jasmine"))
         self.actionAll.setText(_translate("MainWindow", "All"))
         self.actionNy.setText(_translate("MainWindow", "Ny"))
-        self.actionJasmine_2.setText(_translate("MainWindow", "Jasmine Sellmo"))
-        self.actionSamuel_2.setText(_translate("MainWindow", "Samuel Lindsköld"))
+        self.actionJasmine_2.setText(_translate("MainWindow", "Jasmine"))
+        self.actionSamuel_2.setText(_translate("MainWindow", "Samuel"))
         self.actionNytt.setText(_translate("MainWindow", "Ny person"))
     
     def add_nSD(self, person):
