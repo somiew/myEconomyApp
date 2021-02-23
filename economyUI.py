@@ -360,6 +360,7 @@ class Ui_MainWindow(object):
             msg.exec_()
         self.show_income(person)
         self.show_totIncome(person)
+        self.inkomstEdit.setText('')
 
 
     def save_expense(self, person):
@@ -375,7 +376,8 @@ class Ui_MainWindow(object):
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
         self.show_expense(person)
-        self.show_totExpense(person)    
+        self.show_totExpense(person) 
+        self.utgiftEdit.setText('')   
 
     
     def show_income(self, person):
