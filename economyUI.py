@@ -207,6 +207,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.inkomstWidget, self.utgiftWidget)
 
         self.show_income(economy.read_line('person.txt', 0))
+        self.show_expense(economy.read_line('person.txt', 0))
         self.show_totIncome(economy.read_line('person.txt', 0))
         self.show_totExpense(economy.read_line('person.txt', 0))
 
@@ -340,6 +341,7 @@ class Ui_MainWindow(object):
 
         # update income and expense
         self.show_income(person)
+        self.show_expense(person)
         self.show_totIncome(person)
         self.show_totExpense(person)
 
@@ -372,6 +374,7 @@ class Ui_MainWindow(object):
             msg.setText('Utgiften kunde inte sparas!')
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
+        self.show_expense(person)
         self.show_totExpense(person)    
 
     
@@ -403,6 +406,98 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         self.totInk.setText(_translate("MainWindow", str(int(allIncome))))
     
+
+    def show_expense(self, person):
+        expenseList = economy.read_expenseCat(person)
+
+        # all categories
+        hyra = 0
+        abonnemang = 0
+        resorLånga = 0
+        resorKorta = 0
+        matMat = 0
+        matMatute = 0
+        matSötsug = 0
+        skolrelaterat = 0
+        inredning = 0
+        kläder = 0
+        spel = 0
+        elektronik = 0
+        sminkBad = 0
+        medicin = 0
+        alkohol = 0
+        sparande = 0
+        presenter = 0
+        övrigt = 0
+
+        totResor = 0
+        totMat = 0
+
+        # create total for all categories
+        for each in expenseList:
+            if each[0] == 'Hyra':
+                hyra += int(each[1])
+            elif each[0] == 'Abonnemang':
+                abonnemang += int(each[1])
+            elif each[0] == 'Skolrelaterat':
+                skolrelaterat += int(each[1])
+            elif each[0] == 'Resor - Långa':
+                resorLånga += int(each[1])
+            elif each[0] == 'Resor - Korta':
+                resorKorta += int(each[1])
+            elif each[0] == 'Mat - Mat':
+                matMat += int(each[1])
+            elif each[0] == 'Mat - Mat ute':
+                matMatute += int(each[1])
+            elif each[0] == 'Mat - Sötsug':
+                matSötsug += int(each[1])
+            elif each[0] == 'Inredning':
+                inredning += int(each[1])
+            elif each[0] == 'Kläder':
+                kläder += int(each[1])   
+            elif each[0] == 'Spel':
+                spel += int(each[1])   
+            elif each[0] == 'Elektronik':
+                elektronik += int(each[1])   
+            elif each[0] == 'Smink/Bad':
+                sminkBad += int(each[1])   
+            elif each[0] == 'Medicin':
+                medicin += int(each[1])   
+            elif each[0] == 'Alkohol':
+                alkohol += int(each[1])   
+            elif each[0] == 'Sparande':
+                sparande += int(each[1])       
+            elif each[0] == 'Presenter':
+                presenter += int(each[1])
+            elif each[0] == 'Övrigt':
+                övrigt += int(each[1])
+            
+        totResor = resorLånga + resorKorta
+        totMat = matMat + matMatute + matSötsug
+
+        # update UI
+        _translate = QtCore.QCoreApplication.translate
+        self.utgiftWidget.topLevelItem(0).setText(1, _translate("MainWindow", str(hyra)))
+        self.utgiftWidget.topLevelItem(1).setText(1, _translate("MainWindow", str(abonnemang)))
+        self.utgiftWidget.topLevelItem(2).setText(1, _translate("MainWindow", str(totResor)))
+        self.utgiftWidget.topLevelItem(2).child(0).setText(1, _translate("MainWindow", str(resorLånga)))
+        self.utgiftWidget.topLevelItem(2).child(1).setText(1, _translate("MainWindow", str(resorKorta)))
+        self.utgiftWidget.topLevelItem(3).setText(1, _translate("MainWindow", str(totMat)))
+        self.utgiftWidget.topLevelItem(3).child(0).setText(1, _translate("MainWindow", str(matMat)))
+        self.utgiftWidget.topLevelItem(3).child(1).setText(1, _translate("MainWindow", str(matMatute)))
+        self.utgiftWidget.topLevelItem(3).child(2).setText(1, _translate("MainWindow", str(matSötsug)))
+        self.utgiftWidget.topLevelItem(4).setText(1, _translate("MainWindow", str(skolrelaterat)))
+        self.utgiftWidget.topLevelItem(5).setText(1, _translate("MainWindow", str(inredning)))
+        self.utgiftWidget.topLevelItem(6).setText(1, _translate("MainWindow", str(kläder)))
+        self.utgiftWidget.topLevelItem(7).setText(1, _translate("MainWindow", str(spel)))
+        self.utgiftWidget.topLevelItem(8).setText(1, _translate("MainWindow", str(elektronik)))
+        self.utgiftWidget.topLevelItem(9).setText(1, _translate("MainWindow", str(sminkBad)))
+        self.utgiftWidget.topLevelItem(10).setText(1, _translate("MainWindow", str(medicin)))
+        self.utgiftWidget.topLevelItem(11).setText(1, _translate("MainWindow", str(alkohol)))
+        self.utgiftWidget.topLevelItem(12).setText(1, _translate("MainWindow", str(sparande)))
+        self.utgiftWidget.topLevelItem(13).setText(1, _translate("MainWindow", str(presenter)))
+        self.utgiftWidget.topLevelItem(14).setText(1, _translate("MainWindow", str(övrigt)))
+
 
     def show_totExpense(self, person):
         allExpense = economy.read_expense(person)

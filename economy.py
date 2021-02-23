@@ -69,6 +69,7 @@ def read_income(person):
 
     return totalIncome
 
+
 def read_incomeCat(person):
     conn = sqlite3.connect('economy.db')
     c = conn.cursor()
@@ -80,6 +81,7 @@ def read_incomeCat(person):
     conn.close()
     
     return incomeList
+
 
 def read_expense(person):
     conn = sqlite3.connect('economy.db')
@@ -94,6 +96,20 @@ def read_expense(person):
     conn.close()
 
     return totalExpense
+
+
+def read_expenseCat(person):
+    conn = sqlite3.connect('economy.db')
+    c = conn.cursor()
+
+    expenseList = c.execute('SELECT expenseCat, expense FROM ' + person + ' WHERE expense IS NOT NULL')
+    expenseList = expenseList.fetchall()
+
+    c.close()
+    conn.close()
+    
+    return expenseList
+
 
 def read_newSalaryDate(person):
     conn = sqlite3.connect('economy.db')
