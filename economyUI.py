@@ -121,12 +121,12 @@ class Ui_MainWindow(object):
         self.nastaLon_3 = QtWidgets.QLabel(self.tab)
         self.nastaLon_3.setGeometry(QtCore.QRect(370, 390, 81, 31))
         self.nastaLon_3.setObjectName("nastaLon_3")
-        self.nastaLon_4 = QtWidgets.QLabel(self.tab)
-        self.nastaLon_4.setGeometry(QtCore.QRect(20, 390, 81, 31))
-        self.nastaLon_4.setObjectName("nastaLon_4")
-        self.nastaLon_5 = QtWidgets.QLabel(self.tab)
-        self.nastaLon_5.setGeometry(QtCore.QRect(110, 390, 81, 31))
-        self.nastaLon_5.setObjectName("nastaLon_5")
+        self.totalInkomst = QtWidgets.QLabel(self.tab)
+        self.totalInkomst.setGeometry(QtCore.QRect(20, 390, 81, 31))
+        self.totalInkomst.setObjectName("totalInkomst")
+        self.totInk = QtWidgets.QLabel(self.tab)
+        self.totInk.setGeometry(QtCore.QRect(110, 390, 81, 31))
+        self.totInk.setObjectName("totInk")
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -206,6 +206,9 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.sparaDatum, self.inkomstWidget)
         MainWindow.setTabOrder(self.inkomstWidget, self.utgiftWidget)
 
+        self.show_totIncome(economy.read_line('person.txt', 0))
+
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Min Ekonomi"))
@@ -277,8 +280,8 @@ class Ui_MainWindow(object):
         self.sparaUtgift.setText(_translate("MainWindow", "Lägg till"))
         self.nastaLon_2.setText(_translate("MainWindow", "Totala utgifter:"))
         self.nastaLon_3.setText(_translate("MainWindow", "4000"))
-        self.nastaLon_4.setText(_translate("MainWindow", "Totala inkomster:"))
-        self.nastaLon_5.setText(_translate("MainWindow", "18000"))
+        self.totalInkomst.setText(_translate("MainWindow", "Totala inkomster:"))
+        self.totInk.setText(_translate("MainWindow", "18000"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Huvudtab"))
         self.kvarAvLon.setText(_translate("MainWindow", "Kvar av lön:"))
         self.kvarPerDag.setText(_translate("MainWindow", "Kvar per dag till ny lön:"))
@@ -322,10 +325,16 @@ class Ui_MainWindow(object):
     def setPerson(self, person):
         economy.create_table(person)
         self.profilNamn.setText(person)
+
+        # correct dates
         nSDYear, nSDMonth, nSDDay = self.read_nSD(person)
         self.nastaLonEdit.setDate(QtCore.QDate(nSDYear, nSDMonth, nSDDay))
-        # return person
+
+        # write name to textfile
         economy.write_line('person.txt', person)
+
+        # update income
+        self.show_totIncome(person)
 
     def save_income(self, person):
         income = self.inkomstEdit.text()
@@ -339,6 +348,7 @@ class Ui_MainWindow(object):
             msg.setText('Inkomsten kunde inte sparas!')
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
+        self.show_totIncome(person)
 
     def save_expense(self, person):
         expense = self.utgiftEdit.text()
@@ -353,11 +363,18 @@ class Ui_MainWindow(object):
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
 
+    def show_totIncome(self, person):
+        allIncome = economy.read_income(person)
+        print(allIncome)
+        _translate = QtCore.QCoreApplication.translate
+        self.totInk.setText(_translate("MainWindow", str(int(allIncome))))
+
 
 if __name__ == "__main__":
     import sys
 
     person = economy.read_line('person.txt', 0)
+    
 
     # create table unless it already exists
     economy.create_table(person)
