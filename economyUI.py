@@ -2,6 +2,7 @@
 # python 3.8.7
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 import economy
 
 
@@ -184,9 +185,12 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
 
         # connect button to function
-        self.sparaDatum.pressed.connect(lambda: self.add_nSD(economy.read_line('person.txt', 0)))
+        self.sparaDatum.pressed.connect(lambda: self.save_nSD(economy.read_line('person.txt', 0)))
         self.actionSamuel.triggered.connect(lambda: self.setPerson('Samuel'))
         self.actionJasmine.triggered.connect(lambda: self.setPerson('Jasmine'))
+
+        self.sparaInkomst.pressed.connect(lambda: self.save_income(economy.read_line('person.txt', 0)))
+        #self.sparaUtgift.pressed.connect(lambda: self.save_expense(economy.read_line('person.txt', 0)))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -204,7 +208,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Min Ekonomi"))
         self.namn.setText(_translate("MainWindow", "Namn:"))
         self.profilNamn.setText(_translate("MainWindow", person))
         self.sparaDatum.setText(_translate("MainWindow", "Spara Datum"))
@@ -295,7 +299,7 @@ class Ui_MainWindow(object):
         self.actionSamuel.setText(_translate("MainWindow", "Samuel"))
         self.actionNytt.setText(_translate("MainWindow", "Ny person"))
     
-    def add_nSD(self, person):
+    def save_nSD(self, person):
         # save new salary date from ui
         newDate = self.nastaLonEdit.date()
         newDate = newDate.toPyDate()      
@@ -322,6 +326,19 @@ class Ui_MainWindow(object):
         self.nastaLonEdit.setDate(QtCore.QDate(nSDYear, nSDMonth, nSDDay))
         # return person
         economy.write_line('person.txt', person)
+
+    def save_income(self, person):
+        income = self.inkomstEdit.text()
+        if income.isdecimal():
+            incomeCat = self.inkomstKategori.currentText()
+            economy.add_income(person, incomeCat, income)
+            print(person, incomeCat, income)
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle('Error')
+            msg.setText('Inkomsten kunde inte sparas!')
+            msg.setIcon(QMessageBox.Warning)
+            msg.exec_()
 
 
 if __name__ == "__main__":

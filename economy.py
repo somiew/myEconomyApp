@@ -25,7 +25,7 @@ def add_income(person, incomeCategory, income):
     c = conn.cursor()
 
     c.execute('INSERT INTO ' + person + '(incomeCat, income) VALUES (?, ?)',
-    (incomeCat, income))
+    (incomeCategory, income))
     conn.commit()
 
     c.close()
@@ -36,7 +36,7 @@ def add_expense(person, expenseCategory, expense):
     c = conn.cursor()
 
     c.execute('INSERT INTO ' + person + '(expenseCat, expense) VALUES (?, ?)',
-    (expenseCat, expense))
+    (expenseCategory, expense))
     conn.commit()
 
     c.close()
