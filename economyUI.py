@@ -190,7 +190,7 @@ class Ui_MainWindow(object):
         self.actionJasmine.triggered.connect(lambda: self.setPerson('Jasmine'))
 
         self.sparaInkomst.pressed.connect(lambda: self.save_income(economy.read_line('person.txt', 0)))
-        #self.sparaUtgift.pressed.connect(lambda: self.save_expense(economy.read_line('person.txt', 0)))
+        self.sparaUtgift.pressed.connect(lambda: self.save_expense(economy.read_line('person.txt', 0)))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -337,6 +337,19 @@ class Ui_MainWindow(object):
             msg = QMessageBox()
             msg.setWindowTitle('Error')
             msg.setText('Inkomsten kunde inte sparas!')
+            msg.setIcon(QMessageBox.Warning)
+            msg.exec_()
+
+    def save_expense(self, person):
+        expense = self.utgiftEdit.text()
+        if expense.isdecimal():
+            expenseCat = self.utgiftKategori.currentText()
+            economy.add_expense(person, expenseCat, expense)
+            print(person, expenseCat, expense)
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle('Error')
+            msg.setText('Utgiften kunde inte sparas!')
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
 
