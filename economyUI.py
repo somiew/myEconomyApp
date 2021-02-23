@@ -206,6 +206,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.sparaDatum, self.inkomstWidget)
         MainWindow.setTabOrder(self.inkomstWidget, self.utgiftWidget)
 
+        self.show_income(economy.read_line('person.txt', 0))
         self.show_totIncome(economy.read_line('person.txt', 0))
         self.show_totExpense(economy.read_line('person.txt', 0))
 
@@ -223,7 +224,7 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.inkomstWidget.isSortingEnabled()
         self.inkomstWidget.setSortingEnabled(False)
         self.inkomstWidget.topLevelItem(0).setText(0, _translate("MainWindow", "Lön"))
-        self.inkomstWidget.topLevelItem(0).setText(1, _translate("MainWindow", "18000"))
+        self.inkomstWidget.topLevelItem(0).setText(1, _translate("MainWindow", "0000"))
         self.inkomstWidget.topLevelItem(1).setText(0, _translate("MainWindow", "CSN"))
         self.inkomstWidget.topLevelItem(2).setText(0, _translate("MainWindow", "Presenter"))
         self.inkomstWidget.topLevelItem(3).setText(0, _translate("MainWindow", "Annat"))
@@ -253,7 +254,7 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.utgiftWidget.isSortingEnabled()
         self.utgiftWidget.setSortingEnabled(False)
         self.utgiftWidget.topLevelItem(0).setText(0, _translate("MainWindow", "Hyra"))
-        self.utgiftWidget.topLevelItem(0).setText(1, _translate("MainWindow", "4000"))
+        self.utgiftWidget.topLevelItem(0).setText(1, _translate("MainWindow", "0000"))
         self.utgiftWidget.topLevelItem(1).setText(0, _translate("MainWindow", "Abonnemang"))
         self.utgiftWidget.topLevelItem(2).setText(0, _translate("MainWindow", "Resor"))
         self.utgiftWidget.topLevelItem(2).child(0).setText(0, _translate("MainWindow", "Långa"))
@@ -280,9 +281,9 @@ class Ui_MainWindow(object):
         self.inkomstKategori.setItemText(3, _translate("MainWindow", "Annat"))
         self.sparaUtgift.setText(_translate("MainWindow", "Lägg till"))
         self.totalUtgift.setText(_translate("MainWindow", "Totala utgifter:"))
-        self.totUtg.setText(_translate("MainWindow", "4000"))
+        self.totUtg.setText(_translate("MainWindow", "0000"))
         self.totalInkomst.setText(_translate("MainWindow", "Totala inkomster:"))
-        self.totInk.setText(_translate("MainWindow", "18000"))
+        self.totInk.setText(_translate("MainWindow", "0000"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Huvudtab"))
         self.kvarAvLon.setText(_translate("MainWindow", "Kvar av lön:"))
         self.kvarPerDag.setText(_translate("MainWindow", "Kvar per dag till ny lön:"))
@@ -303,11 +304,13 @@ class Ui_MainWindow(object):
         self.actionSamuel.setText(_translate("MainWindow", "Samuel"))
         self.actionNytt.setText(_translate("MainWindow", "Ny person"))
     
+
     def save_nSD(self, person):
         # save new salary date from ui
         newDate = self.nastaLonEdit.date()
         newDate = newDate.toPyDate()      
         economy.add_newSalaryDate(person, newDate)
+
 
     def read_nSD(self, person):
         # get date from database, unless person is new. Then set to 1970-01-01.
@@ -323,6 +326,7 @@ class Ui_MainWindow(object):
             nSDDay = 1
         return nSDYear, nSDMonth, nSDDay
 
+
     def setPerson(self, person):
         economy.create_table(person)
         self.profilNamn.setText(person)
@@ -335,8 +339,10 @@ class Ui_MainWindow(object):
         economy.write_line('person.txt', person)
 
         # update income and expense
+        self.show_income(person)
         self.show_totIncome(person)
         self.show_totExpense(person)
+
 
     def save_income(self, person):
         income = self.inkomstEdit.text()
@@ -350,6 +356,7 @@ class Ui_MainWindow(object):
             msg.setText('Inkomsten kunde inte sparas!')
             msg.setIcon(QMessageBox.Warning)
             msg.exec_()
+        self.show_income(person)
         self.show_totIncome(person)
 
 
@@ -367,15 +374,38 @@ class Ui_MainWindow(object):
             msg.exec_()
         self.show_totExpense(person)    
 
+    
+    def show_income(self, person):
+        incomeList = economy.read_incomeCat(person)
+        lön = 0
+        csn = 0
+        presenter = 0
+        annat = 0
+        for each in incomeList:
+            if each[0] == 'Lön':
+                lön += int(each[1])
+            elif each[0] == 'CSN':
+                csn += int(each[1])
+            elif each[0] == 'Presenter':
+                presenter += int(each[1])
+            elif each[0] == 'Annat':
+                annat += int(each[1])
+            
+        _translate = QtCore.QCoreApplication.translate
+        self.inkomstWidget.topLevelItem(0).setText(1, _translate("MainWindow", str(lön)))
+        self.inkomstWidget.topLevelItem(1).setText(1, _translate("MainWindow", str(csn)))
+        self.inkomstWidget.topLevelItem(2).setText(1, _translate("MainWindow", str(presenter)))
+        self.inkomstWidget.topLevelItem(3).setText(1, _translate("MainWindow", str(annat)))
+
+
     def show_totIncome(self, person):
         allIncome = economy.read_income(person)
-        print(allIncome)
         _translate = QtCore.QCoreApplication.translate
         self.totInk.setText(_translate("MainWindow", str(int(allIncome))))
     
+
     def show_totExpense(self, person):
         allExpense = economy.read_expense(person)
-        print(allExpense)
         _translate = QtCore.QCoreApplication.translate
         self.totUtg.setText(_translate("MainWindow", str(int(allExpense))))
 
